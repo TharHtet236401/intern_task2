@@ -13,28 +13,109 @@ class Command(BaseCommand):
             # Delete existing transactions
             Transaction.objects.all().delete()
             
-            # Categories and their typical amount ranges
+            # Categories and their typical amount ranges and descriptions
             categories = {
-                'food': (10, 200),
-                'transportation': (5, 100),
-                'entertainment': (20, 300),
-                'bills': (50, 1000),
-                'other': (10, 500)
+                'food': {
+                    'range': (10, 200),
+                    'descriptions': [
+                        'Grocery shopping at Walmart',
+                        'Restaurant dinner',
+                        'Coffee and snacks',
+                        'Weekly groceries',
+                        'Food delivery'
+                    ]
+                },
+                'transportation': {
+                    'range': (5, 100),
+                    'descriptions': [
+                        'Bus ticket',
+                        'Uber ride',
+                        'Gas refill',
+                        'Train ticket',
+                        'Car maintenance'
+                    ]
+                },
+                'entertainment': {
+                    'range': (20, 300),
+                    'descriptions': [
+                        'Movie tickets',
+                        'Concert tickets',
+                        'Netflix subscription',
+                        'Gaming subscription',
+                        'Weekend activities'
+                    ]
+                },
+                'bills': {
+                    'range': (50, 1000),
+                    'descriptions': [
+                        'Electricity bill',
+                        'Water bill',
+                        'Internet bill',
+                        'Phone bill',
+                        'Insurance payment'
+                    ]
+                },
+                'other': {
+                    'range': (10, 500),
+                    'descriptions': [
+                        'Miscellaneous purchase',
+                        'Home supplies',
+                        'Personal care items',
+                        'Office supplies',
+                        'Gift purchase'
+                    ]
+                }
             }
             
             # Income sources and their typical ranges
             income_sources = {
-                'salary': (2000, 5000),
-                'freelance': (100, 1000),
-                'investment': (50, 500),
-                'other': (100, 1000)
+                'salary': {
+                    'range': (2000, 5000),
+                    'descriptions': [
+                        'Monthly salary',
+                        'Regular paycheck',
+                        'Salary deposit',
+                        'Wage payment',
+                        'Pay period deposit'
+                    ]
+                },
+                'freelance': {
+                    'range': (100, 1000),
+                    'descriptions': [
+                        'Freelance project payment',
+                        'Consulting fee',
+                        'Contract work',
+                        'Project completion payment',
+                        'Freelance gig'
+                    ]
+                },
+                'investment': {
+                    'range': (50, 500),
+                    'descriptions': [
+                        'Stock dividend',
+                        'Interest income',
+                        'Investment return',
+                        'Portfolio gains',
+                        'Dividend payment'
+                    ]
+                },
+                'other': {
+                    'range': (100, 1000),
+                    'descriptions': [
+                        'Gift received',
+                        'Refund',
+                        'Bonus payment',
+                        'Side hustle income',
+                        'Miscellaneous income'
+                    ]
+                }
             }
             
             # Generate random dates within the last 6 months
             end_date = timezone.now().date()
             start_date = end_date - timedelta(days=180)
             
-            # Generate 150 transactions (adjust number as needed)
+            # Generate 150 transactions
             num_transactions = 150
             transactions = []
             
@@ -44,15 +125,16 @@ class Command(BaseCommand):
                 
                 if is_income:
                     category = random.choice(list(income_sources.keys()))
-                    min_amount, max_amount = income_sources[category]
+                    category_data = income_sources[category]
                     transaction_type = 'income'
                 else:
                     category = random.choice(list(categories.keys()))
-                    min_amount, max_amount = categories[category]
+                    category_data = categories[category]
                     transaction_type = 'expense'
                 
-                # Generate random amount with 2 decimal places
+                min_amount, max_amount = category_data['range']
                 amount = round(random.uniform(min_amount, max_amount), 2)
+                description = random.choice(category_data['descriptions'])
                 
                 # Generate random date
                 days_between = (end_date - start_date).days
@@ -62,6 +144,7 @@ class Command(BaseCommand):
                     amount=Decimal(str(amount)),
                     date=random_date,
                     category=category,
+                    description=description,
                     transaction_type=transaction_type
                 )
                 transactions.append(transaction)

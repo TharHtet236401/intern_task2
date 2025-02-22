@@ -23,6 +23,7 @@
                                 <tr>
                                     <th scope="col">Date</th>
                                     <th scope="col">Category</th>
+                                    <th scope="col">Description</th>
                                     <th scope="col">Type</th>
                                     <th scope="col" class="text-end">Amount</th>
                                 </tr>
@@ -48,6 +49,13 @@
                                         <span class="badge rounded-pill bg-light text-dark">
                                             {{ transaction.get_category_display }}
                                         </span>
+                                    </td>
+                                    <td>
+                                        {% if transaction.description %}
+                                            {{ transaction.description }}
+                                        {% else %}
+                                            <span class="text-muted fst-italic">No description</span>
+                                        {% endif %}
                                     </td>
                                     <td>
                                         {% if transaction.transaction_type == 'income' %}
