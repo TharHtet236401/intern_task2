@@ -7,6 +7,10 @@ from django.utils import timezone
 import csv
 from datetime import datetime
 from django.contrib import messages
+from django.db.models import Sum
+from decimal import Decimal
+import json
+
 # Create your views here.
 def home(request):
     try:
@@ -120,10 +124,24 @@ def analysis(request):
         # Calculate net balance
         net_balance = total_income - total_expenses
         
+        # Get expense data by category for chart
+        expense_by_category = (
+            Transaction.objects.filter(transaction_type='expense')
+            .values('category')
+            .annotate(total=Sum('amount'))
+            .order_by('-total')
+        )
+        
+        # Prepare chart data with proper JSON serialization
+        chart_labels = json.dumps([Transaction.CATEGORY_CHOICES_DICT.get(item['category'], item['category']) for item in expense_by_category])
+        chart_data = json.dumps([float(item['total']) for item in expense_by_category])
+        
         context = { 
             'total_income': total_income,
             'total_expenses': total_expenses,
-            'net_balance': net_balance
+            'net_balance': net_balance,
+            'chart_labels': chart_labels,
+            'chart_data': chart_data,
         }
         
         return render(request, 'transaction/analysis.html', context)

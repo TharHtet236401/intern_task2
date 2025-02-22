@@ -32,6 +32,8 @@ class Transaction(models.Model):
         default='expense'
     )
 
+    CATEGORY_CHOICES_DICT = dict(CATEGORY_CHOICES)
+
     class Meta:
         ordering = ['-created_at']
 

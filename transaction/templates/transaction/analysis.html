@@ -62,8 +62,22 @@
         </div>
     </div>
 
+    <!-- Chart Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Expenses by Category</h5>
+                    <div style="height: 400px;">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Back to Transactions button -->
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-12">
             <a href="{% url 'home' %}" class="btn btn-outline-primary d-flex align-items-center" style="width: fit-content;">
                 <i class="fas fa-arrow-left me-2"></i>
@@ -72,6 +86,70 @@
         </div>
     </div>
 </div>
+
+<!-- Add Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+    
+    // Chart data
+    const labels = JSON.parse('{{ chart_labels|safe|escapejs }}');
+    const data = JSON.parse('{{ chart_data|safe|escapejs }}');
+    
+    // Generate colors for each category
+    const colors = [
+        'rgba(255, 99, 132, 0.7)',
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(75, 192, 192, 0.7)',
+        'rgba(153, 102, 255, 0.7)',
+        'rgba(255, 159, 64, 0.7)',
+    ];
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Expenses ($)',
+                data: data,
+                backgroundColor: colors,
+                borderColor: colors.map(color => color.replace('0.7', '1')),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 2,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$ ' + context.raw.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$ ' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
 
 <style>
     .icon-square {
@@ -94,10 +172,11 @@
     
     .card-body {
         padding: 1.5rem;
+        overflow: hidden;
     }
     
     .card-title {
-        font-size: 2rem;
+        font-size: 1.25rem;
         font-weight: 600;
     }
     
