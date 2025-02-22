@@ -114,17 +114,14 @@ def export_transactions(request):
 
 def analysis(request):
     try:
-        # Get all transactions
         transactions = Transaction.objects.all()
         
-        # Calculate total income and expenses
+        # Calculate totals
         total_income = sum(t.amount for t in transactions if t.transaction_type == 'income')
         total_expenses = sum(t.amount for t in transactions if t.transaction_type == 'expense')
-        
-        # Calculate net balance
         net_balance = total_income - total_expenses
         
-        # Get expense data by category for chart
+        # Get expense data by category
         expense_by_category = (
             Transaction.objects.filter(transaction_type='expense')
             .values('category')
@@ -132,16 +129,31 @@ def analysis(request):
             .order_by('-total')
         )
         
-        # Prepare chart data with proper JSON serialization
-        chart_labels = json.dumps([Transaction.CATEGORY_CHOICES_DICT.get(item['category'], item['category']) for item in expense_by_category])
-        chart_data = json.dumps([float(item['total']) for item in expense_by_category])
+        # Get income data by category
+        income_by_category = (
+            Transaction.objects.filter(transaction_type='income')
+            .values('category')
+            .annotate(total=Sum('amount'))
+            .order_by('-total')
+        )
+        
+        # Prepare chart data
+        expense_labels = json.dumps([Transaction.CATEGORY_CHOICES_DICT.get(item['category'], item['category']) 
+                                   for item in expense_by_category])
+        expense_data = json.dumps([float(item['total']) for item in expense_by_category])
+        
+        income_labels = json.dumps([Transaction.CATEGORY_CHOICES_DICT.get(item['category'], item['category']) 
+                                  for item in income_by_category])
+        income_data = json.dumps([float(item['total']) for item in income_by_category])
         
         context = { 
             'total_income': total_income,
             'total_expenses': total_expenses,
             'net_balance': net_balance,
-            'chart_labels': chart_labels,
-            'chart_data': chart_data,
+            'expense_labels': expense_labels,
+            'expense_data': expense_data,
+            'income_labels': income_labels,
+            'income_data': income_data,
         }
         
         return render(request, 'transaction/analysis.html', context)
