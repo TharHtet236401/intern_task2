@@ -14,15 +14,16 @@ class Command(BaseCommand):
             Transaction.objects.all().delete()
             
             # Categories and their typical amount ranges and descriptions
-            categories = {
+            expense_categories = {
                 'food': {
                     'range': (10, 200),
                     'descriptions': [
                         'Grocery shopping at Walmart',
-                        'Restaurant dinner',
-                        'Coffee and snacks',
+                        'Lunch at restaurant',
+                        'Coffee and breakfast',
                         'Weekly groceries',
-                        'Food delivery'
+                        'Food delivery',
+                        'Dinner with friends'
                     ]
                 },
                 'transportation': {
@@ -32,7 +33,8 @@ class Command(BaseCommand):
                         'Uber ride',
                         'Gas refill',
                         'Train ticket',
-                        'Car maintenance'
+                        'Car maintenance',
+                        'Taxi fare'
                     ]
                 },
                 'entertainment': {
@@ -42,7 +44,8 @@ class Command(BaseCommand):
                         'Concert tickets',
                         'Netflix subscription',
                         'Gaming subscription',
-                        'Weekend activities'
+                        'Weekend activities',
+                        'Bowling night'
                     ]
                 },
                 'bills': {
@@ -52,23 +55,25 @@ class Command(BaseCommand):
                         'Water bill',
                         'Internet bill',
                         'Phone bill',
-                        'Insurance payment'
+                        'Insurance payment',
+                        'Rent payment'
                     ]
                 },
                 'other': {
                     'range': (10, 500),
                     'descriptions': [
-                        'Miscellaneous purchase',
                         'Home supplies',
                         'Personal care items',
                         'Office supplies',
-                        'Gift purchase'
+                        'Gift purchase',
+                        'Clothing purchase',
+                        'Miscellaneous items'
                     ]
                 }
             }
             
             # Income sources and their typical ranges
-            income_sources = {
+            income_categories = {
                 'salary': {
                     'range': (2000, 5000),
                     'descriptions': [
@@ -112,11 +117,11 @@ class Command(BaseCommand):
             }
             
             # Generate random dates within the last 6 months
-            end_date = timezone.now().date()
+            end_date = timezone.now()
             start_date = end_date - timedelta(days=180)
             
-            # Generate 150 transactions
-            num_transactions = 150
+            # Generate 175 transactions (adjust number as needed)
+            num_transactions = 175
             transactions = []
             
             for _ in range(num_transactions):
@@ -124,30 +129,38 @@ class Command(BaseCommand):
                 is_income = random.random() < 0.3
                 
                 if is_income:
-                    category = random.choice(list(income_sources.keys()))
-                    category_data = income_sources[category]
+                    category = random.choice(list(income_categories.keys()))
+                    category_data = income_categories[category]
                     transaction_type = 'income'
                 else:
-                    category = random.choice(list(categories.keys()))
-                    category_data = categories[category]
+                    category = random.choice(list(expense_categories.keys()))
+                    category_data = expense_categories[category]
                     transaction_type = 'expense'
                 
+                # Generate random amount with 2 decimal places
                 min_amount, max_amount = category_data['range']
                 amount = round(random.uniform(min_amount, max_amount), 2)
-                description = random.choice(category_data['descriptions'])
                 
-                # Generate random date
-                days_between = (end_date - start_date).days
-                random_date = start_date + timedelta(days=random.randint(0, days_between))
+                # Generate random date and time
+                random_days = random.randint(0, (end_date - start_date).days)
+                random_seconds = random.randint(0, 24*60*60)  # Random time within the day
+                transaction_date = start_date + timedelta(days=random_days)
+                created_at = transaction_date + timedelta(seconds=random_seconds)
+                
+                description = random.choice(category_data['descriptions'])
                 
                 transaction = Transaction(
                     amount=Decimal(str(amount)),
-                    date=random_date,
+                    date=transaction_date,
+                    created_at=created_at,
                     category=category,
                     description=description,
                     transaction_type=transaction_type
                 )
                 transactions.append(transaction)
+            
+            # Sort transactions by created_at before bulk create to maintain chronological order
+            transactions.sort(key=lambda x: x.created_at)
             
             # Bulk create all transactions
             Transaction.objects.bulk_create(transactions)
