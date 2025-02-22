@@ -115,6 +115,37 @@ def export_transactions(request):
 
 def analysis(request):
     try:
+        # Get current month and year for budget comparison
+        current_month = timezone.now().month
+        current_year = timezone.now().year
+        
+        # Get budgets for current month
+        budgets = Budget.objects.filter(
+            month=current_month,
+            year=current_year
+        )
+        budget_dict = {budget.category: float(budget.amount) for budget in budgets}
+        
+        # Get expenses for current month
+        expenses_by_category = (
+            Transaction.objects.filter(
+                transaction_type='expense',
+                date__month=current_month,
+                date__year=current_year
+            )
+            .values('category')
+            .annotate(total=Sum('amount'))
+        )
+        expense_dict = {item['category']: float(item['total']) for item in expenses_by_category}
+        
+        # Prepare comparison data
+        categories = set(budget_dict.keys()) | set(expense_dict.keys())
+        comparison_data = {
+            'categories': json.dumps([Transaction.CATEGORY_CHOICES_DICT.get(cat, cat) for cat in categories]),
+            'budget_amounts': json.dumps([budget_dict.get(cat, 0) for cat in categories]),
+            'spent_amounts': json.dumps([expense_dict.get(cat, 0) for cat in categories])
+        }
+        
         transactions = Transaction.objects.all()
         
         # Calculate totals
@@ -167,7 +198,8 @@ def analysis(request):
                                   for item in income_by_category])
         income_data = json.dumps([float(item['total']) for item in income_by_category])
         
-        context = { 
+        # Add comparison data to your existing context
+        context = {
             'total_income': total_income,
             'total_expenses': total_expenses,
             'net_balance': net_balance,
@@ -178,6 +210,7 @@ def analysis(request):
             'trend_labels': trend_labels,
             'trend_income': trend_income,
             'trend_expenses': trend_expenses,
+            'comparison_data': comparison_data,
         }
         
         return render(request, 'transaction/analysis.html', context)
