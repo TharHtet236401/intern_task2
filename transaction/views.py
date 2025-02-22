@@ -186,16 +186,13 @@ def analysis(request):
 
 def budget(request):
     try:
-        # Get selected month and year from query parameters, default to current
         selected_month = int(request.GET.get('month', timezone.now().month))
         selected_year = int(request.GET.get('year', timezone.now().year))
         
-        # Get all available years from budgets for the filter
         available_years = Budget.objects.dates('created_at', 'year').values_list('year', flat=True).distinct()
         if not available_years:
             available_years = [timezone.now().year]
             
-        # Get budgets for selected month/year
         budgets = Budget.objects.filter(
             month=selected_month,
             year=selected_year
@@ -214,6 +211,10 @@ def budget(request):
             ]
         }
 
+        # Check if it's an HTMX request
+        if request.headers.get('HX-Request'):
+            return render(request, 'transaction/partials/budget_table.html', context)
+        
         return render(request, 'transaction/budget.html', context)
     except Exception as e:
         print(f"Error in budget view: {str(e)}")
