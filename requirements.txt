@@ -1,0 +1,7 @@
+Django>=5.1.6
+python-dateutil>=2.8.2
+django-htmx>=1.17.2
+
+# Optional packages for visualization and data analysis
+plotly>=5.18.0  # For charts and visualizations
+pandas>=2.2.0   # For advanced data manipulation

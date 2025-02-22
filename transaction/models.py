@@ -22,7 +22,13 @@ class Transaction(models.Model):
     ]
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    def clean(self):
+        if self.amount < 0:
+            raise ValidationError("Amount must be positive")
     date = models.DateField(default=timezone.now)
+    def clean(self):
+        if self.date > timezone.now():
+            raise ValidationError("Date cannot be in the future")
     created_at = models.DateTimeField(default=timezone.now)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     description = models.TextField(max_length=200, blank=True)
