@@ -55,24 +55,10 @@ class Budget(models.Model):
         ('other', 'Other')
     ]
 
-    MONTH_CHOICES = [
-        ('january', 'January'),
-        ('february', 'February'),
-        ('march', 'March'),
-        ('april', 'April'),
-        ('may', 'May'),
-        ('june', 'June'),
-        ('july', 'July'),
-        ('august', 'August'),
-        ('september', 'September'),
-        ('october', 'October'),
-        ('november', 'November'),
-        ('december', 'December')
-    ]
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)    
     updated_at = models.DateTimeField(auto_now=True)
-    month = models.CharField(max_length=50, choices=MONTH_CHOICES, default=timezone.now().month)
+    month = models.IntegerField(default=timezone.now().month)
     year = models.IntegerField(default=timezone.now().year)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
 
@@ -80,5 +66,5 @@ class Budget(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.category} - {self.amount}"
+        return f"{self.category} - {self.amount} ({self.month}/{self.year})"
 

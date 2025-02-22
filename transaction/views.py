@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Transaction
+from .models import Transaction, Budget
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from .forms import TransactionForm
@@ -183,3 +183,38 @@ def analysis(request):
         return render(request, 'transaction/analysis.html', context)
     except Exception as e:
         return render(request, 'transaction/analysis.html', {'error': str(e)})
+
+def budget(request):
+    try:
+        # Get selected month and year from query parameters, default to current
+        selected_month = int(request.GET.get('month', timezone.now().month))
+        selected_year = int(request.GET.get('year', timezone.now().year))
+        
+        # Get all available years from budgets for the filter
+        available_years = Budget.objects.dates('created_at', 'year').values_list('year', flat=True).distinct()
+        if not available_years:
+            available_years = [timezone.now().year]
+            
+        # Get budgets for selected month/year
+        budgets = Budget.objects.filter(
+            month=selected_month,
+            year=selected_year
+        )
+        
+        context = {
+            'budgets': budgets,
+            'current_month': timezone.now().month,
+            'current_year': timezone.now().year,
+            'selected_month': selected_month,
+            'selected_year': selected_year,
+            'available_years': available_years,
+            'months': [
+                {'number': i, 'name': datetime(2000, i, 1).strftime('%B')} 
+                for i in range(1, 13)
+            ]
+        }
+
+        return render(request, 'transaction/budget.html', context)
+    except Exception as e:
+        print(f"Error in budget view: {str(e)}")
+        return render(request, 'transaction/budget.html', {'error': str(e)})
