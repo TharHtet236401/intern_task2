@@ -193,10 +193,35 @@ def budget(request):
         if not available_years:
             available_years = [timezone.now().year]
             
+        # Get budgets for selected month/year
         budgets = Budget.objects.filter(
             month=selected_month,
             year=selected_year
         )
+        
+        # Calculate spent amounts for each category in the selected month
+        spent_amounts = (
+            Transaction.objects.filter(
+                transaction_type='expense',
+                date__year=selected_year,
+                date__month=selected_month
+            )
+            .values('category')
+            .annotate(total=Sum('amount'))
+        )
+        
+        # Convert to dictionary for easy lookup
+        spent_dict = {item['category']: float(item['total']) for item in spent_amounts}
+        
+        # Add spent amounts and calculate progress for each budget
+        for budget in budgets:
+            spent = spent_dict.get(budget.category, 0)
+            budget.spent_amount = spent
+            budget.remaining = float(budget.amount) - spent
+            if float(budget.amount) > 0:
+                budget.progress = min((spent / float(budget.amount)) * 100, 100)
+            else:
+                budget.progress = 0
         
         context = {
             'budgets': budgets,
@@ -211,7 +236,6 @@ def budget(request):
             ]
         }
 
-        # Check if it's an HTMX request
         if request.headers.get('HX-Request'):
             return render(request, 'transaction/partials/budget_table.html', context)
         
