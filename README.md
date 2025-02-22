@@ -73,4 +73,4 @@ The application will be available at `http://127.0.0.1:8000/`
 --For the frontend, since I had no experience with HTMX, I first used a simple template with basic CRUD functionality. After completing it, I tried converting it to HTMX using Cursor Composer and solved issues. Later, I noticed some changes in my backend code due to HTMX integration, so I worked on understanding and adjusting my backend accordingly.
 
 #Chart
---Also i have not experinec with the chart.js.But, I stuided the basic function to know what kind of data to sent from backend.Then,I used code suggestions of Cursor to develop the chart backend functions.
+--I also had no experience with Chart.js, but I studied its basic functions to understand what kind of data needed to be sent from the backend. Then, I used code suggestions from Cursor to develop the backend functions for the chart.
