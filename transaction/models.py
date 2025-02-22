@@ -8,6 +8,12 @@ class Transaction(models.Model):
         ('expense', 'Expense')
     ]
     CATEGORY_CHOICES = [
+        # Income categories
+        ('salary', 'Salary'),
+        ('freelance', 'Freelance'),
+        ('investment', 'Investment'),
+        ('other', 'Other'),
+        # Expense categories
         ('food', 'Food'),
         ('transportation', 'Transportation'),
         ('entertainment', 'Entertainment'),
