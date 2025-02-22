@@ -5,7 +5,7 @@
     <h3>Track your income and expenses</h3>
     
     {% for transaction in transactions %}
-        <p>{{ transaction.category }} - {{ transaction.amount }} - {{ transaction.transaction_type }}</p>
+        <p>{{ transaction.category }} - {{ transaction.amount }} - {{ transaction.transaction_type }} - {{ transaction.date }}</p>
     {% endfor %}
   
 {% endblock content %}
