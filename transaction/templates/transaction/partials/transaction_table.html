@@ -1,0 +1,131 @@
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Category</th>
+                <th scope="col">Description</th>
+                <th scope="col">Type</th>
+                <th scope="col" class="text-end">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in page_obj %}
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        {% if transaction.transaction_type == 'income' %}
+                        <div class="icon-square bg-success bg-opacity-10 text-success me-2">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        {% else %}
+                        <div class="icon-square bg-danger bg-opacity-10 text-danger me-2">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        {% endif %}
+                        {{ transaction.date|date:"M d, Y" }}
+                    </div>
+                </td>
+                <td>
+                    <span class="badge rounded-pill bg-light text-dark">
+                        {{ transaction.get_category_display }}
+                    </span>
+                </td>
+                <td>
+                    {% if transaction.description %}
+                        {{ transaction.description }}
+                    {% else %}
+                        <span class="text-muted fst-italic">No description</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if transaction.transaction_type == 'income' %}
+                    <span class="badge bg-success">Income</span>
+                    {% else %}
+                    <span class="badge bg-danger">Expense</span>
+                    {% endif %}
+                </td>
+                <td class="text-end fw-bold {% if transaction.transaction_type == 'income' %}text-success{% else %}text-danger{% endif %}">
+                    {% if transaction.transaction_type == 'income' %}+{% else %}-{% endif %}
+                    ${{ transaction.amount }}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center py-5">
+                    <div class="text-muted">
+                        <i class="fas fa-receipt fa-3x mb-3"></i>
+                        <p>No transactions found</p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="text-muted small">
+            Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries
+        </div>
+        <nav aria-label="Transaction pagination">
+            <ul class="pagination mb-0">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       hx-get="{% url 'transaction_table' %}?page=1"
+                       hx-target="#transaction-table"
+                       hx-push-url="true">
+                        &laquo;&laquo;
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" 
+                       hx-get="{% url 'transaction_table' %}?page={{ page_obj.previous_page_number }}"
+                       hx-target="#transaction-table"
+                       hx-push-url="true">
+                        &laquo;
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" 
+                               hx-get="{% url 'transaction_table' %}?page={{ num }}"
+                               hx-target="#transaction-table"
+                               hx-push-url="true">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       hx-get="{% url 'transaction_table' %}?page={{ page_obj.next_page_number }}"
+                       hx-target="#transaction-table"
+                       hx-push-url="true">
+                        &raquo;
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" 
+                       hx-get="{% url 'transaction_table' %}?page={{ page_obj.paginator.num_pages }}"
+                       hx-target="#transaction-table"
+                       hx-push-url="true">
+                        &raquo;&raquo;
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div> 
