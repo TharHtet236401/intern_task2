@@ -1,4 +1,11 @@
 <div class="table-responsive">
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{% url 'export_transactions' %}{% if request.GET.category %}?category={{ request.GET.category }}{% endif %}" 
+           class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-download me-1"></i>Export to CSV
+        </a>
+    </div>
+
     <table class="table table-hover">
         <thead class="table-light">
             <tr>

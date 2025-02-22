@@ -7,11 +7,16 @@
             <h2 class="mb-3">Transaction History</h2>
         </div>
         <div class="col-md-4 text-end">
-            <button class="btn btn-primary" 
+            <button class="btn btn-primary me-2" 
                     hx-get="{% url 'add_transaction' %}"
                     hx-target="#dialog">
                 <i class="fas fa-plus"></i> New Transaction
             </button>
+            <a href="{% url 'export_transactions' %}" 
+               class="btn btn-outline-primary"
+               id="export-btn">
+                <i class="fas fa-download"></i> Export
+            </a>
         </div>
     </div>
 
@@ -26,7 +31,8 @@
                                 hx-get="{% url 'transaction_table' %}"
                                 hx-target="#transaction-table"
                                 hx-trigger="change"
-                                name="category">
+                                name="category"
+                                onchange="updateExportUrl(this.value)">
                             <option value="">All Categories</option>
                             {% for category in categories %}
                             <option value="{{ category.0 }}">{{ category.1 }}</option>
@@ -54,6 +60,14 @@
 <div id="dialog" class="modal fade">
     <!-- Modal content will be loaded here -->
 </div>
+
+<script>
+    function updateExportUrl(category) {
+        const exportBtn = document.getElementById('export-btn');
+        const baseUrl = "{% url 'export_transactions' %}";
+        exportBtn.href = category ? `${baseUrl}?category=${category}` : baseUrl;
+    }
+</script>
 
 <style>
     .icon-square {
