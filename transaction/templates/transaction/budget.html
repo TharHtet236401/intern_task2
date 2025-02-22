@@ -61,6 +61,39 @@
         </div>
     </div>
 
+    <!-- Add this after the filter card and before the budget table -->
+    <div class="row mb-3">
+        <div class="col-12">
+            {% for budget in budgets %}
+                {% if budget.progress >= 100 %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <div>
+                            <strong>Budget Alert:</strong> 
+                            Your spending in <strong>{{ budget.get_category_display }}</strong> has exceeded the budget! 
+                            (Budget: ${{ budget.amount|floatformat:2 }}, Spent: ${{ budget.spent_amount|floatformat:2 }})
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% elif budget.progress >= 80 %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <div>
+                            <strong>Warning:</strong> 
+                            Your spending in <strong>{{ budget.get_category_display }}</strong> is approaching the budget limit! 
+                            ({{ budget.progress|floatformat:0 }}% used)
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
     <!-- Budget Table -->
     <div class="row">
         <div class="col-12">
@@ -128,4 +161,5 @@
     }
 </style>
 {% endblock %}
+
 
