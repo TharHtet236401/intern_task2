@@ -23,6 +23,7 @@ class Transaction(models.Model):
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     description = models.TextField(max_length=200, blank=True)
     transaction_type = models.CharField(
@@ -30,6 +31,14 @@ class Transaction(models.Model):
         choices=TRANSACTION_TYPES,
         default='expense'
     )
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_at = timezone.now()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.category} - {self.amount} ({self.transaction_type})"

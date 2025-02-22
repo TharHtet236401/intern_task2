@@ -22,7 +22,7 @@ def home(request):
 def transaction_table(request):
     try:
         category = request.GET.get('category', '')
-        transactions = Transaction.objects.all().order_by('-date')
+        transactions = Transaction.objects.all().order_by('-date', '-created_at')
         
         if category:
             transactions = transactions.filter(category=category)
@@ -76,9 +76,8 @@ def add_transaction(request):
 
 def export_transactions(request):
     try:
-        # Get the same filters as the table
         category = request.GET.get('category', '')
-        transactions = Transaction.objects.all().order_by('-date')
+        transactions = Transaction.objects.all().order_by('-date', '-created_at')
         
         if category:
             transactions = transactions.filter(category=category)
