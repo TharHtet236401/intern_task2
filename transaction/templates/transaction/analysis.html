@@ -66,9 +66,10 @@
         </div>
     </div>
 
-    <!-- Add this before the pie charts -->
+    <!-- Replace the trends and comparison chart sections with this -->
     <div class="row mt-4">
-        <div class="col-12">
+        <!-- Monthly Trends -->
+        <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title mb-3">Monthly Trends</h5>
@@ -78,9 +79,21 @@
                 </div>
             </div>
         </div>
+
+        <!-- Budget Comparison -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Budget vs Actual Spending (This Month)</h5>
+                    <div style="height: 300px;">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Chart Section -->
+    <!-- Category Charts -->
     <div class="row mt-4">
         <!-- Expense Chart -->
         <div class="col-md-6">
@@ -101,20 +114,6 @@
                     <h5 class="card-title mb-3">Income by Category</h5>
                     <div style="height: 400px;">
                         <canvas id="incomeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add this after your existing charts -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">Budget vs Actual Spending (This Month)</h5>
-                    <div style="height: 400px;">
-                        <canvas id="comparisonChart"></canvas>
                     </div>
                 </div>
             </div>
