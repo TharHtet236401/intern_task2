@@ -1,8 +1,12 @@
 {% extends 'main.html' %}
 
 {% block content %}
-    <h1>Home</h1>
-    <h1>Add Transaction</h1>
-    <h2>Welcome to the add transaction page</h2>
+    <h2>Welcome to Financial Transaction Tracker</h2>
+    <h3>Track your income and expenses</h3>
+    
+    {% for transaction in transactions %}
+        <p>{{ transaction.category }} - {{ transaction.amount }} - {{ transaction.transaction_type }}</p>
+    {% endfor %}
+  
 {% endblock content %}
 
