@@ -67,7 +67,10 @@ The application will be available at `http://127.0.0.1:8000/`
   - `templates/` - HTML templates
   - `migrations/` - Database migrations
 
-## License
+## AI Usage Report
 
-This project is licensed under the MIT License.
+#HTMX
+--For the frontend, since I had no experience with HTMX, I first used a simple template with basic CRUD functionality. After completing it, I tried converting it to HTMX using Cursor Composer and solved issues. Later, I noticed some changes in my backend code due to HTMX integration, so I worked on understanding and adjusting my backend accordingly.
 
+#Chart
+--Also i have not experinec with the chart.js.But, I stuided the basic function to know what kind of data to sent from backend.Then,I used code suggestions of Cursor to develop the chart backend functions.
