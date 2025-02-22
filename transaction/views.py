@@ -276,3 +276,47 @@ def budget(request):
     except Exception as e:
         print(f"Error in budget view: {str(e)}")
         return render(request, 'transaction/budget.html', {'error': str(e)})
+
+def add_budget(request):
+    try:
+        if request.method == 'POST':
+            category = request.POST.get('category')
+            amount = request.POST.get('amount')
+            month = request.POST.get('month', timezone.now().month)
+            year = request.POST.get('year', timezone.now().year)
+            
+            # Check if budget already exists for this category/month/year
+            existing_budget = Budget.objects.filter(
+                category=category,
+                month=month,
+                year=year
+            ).first()
+            
+            if existing_budget:
+                existing_budget.amount = amount
+                existing_budget.save()
+                messages.success(request, 'Budget updated successfully!')
+            else:
+                Budget.objects.create(
+                    category=category,
+                    amount=amount,
+                    month=month,
+                    year=year
+                )
+                messages.success(request, 'Budget created successfully!')
+            
+            return redirect('budget')
+        
+        context = {
+            'categories': Budget.CATEGORY_CHOICES,
+            'current_month': timezone.now().month,
+            'current_year': timezone.now().year,
+            'months': [
+                {'number': i, 'name': datetime(2000, i, 1).strftime('%B')} 
+                for i in range(1, 13)
+            ]
+        }
+        return render(request, 'transaction/add_budget.html', context)
+    except Exception as e:
+        messages.error(request, str(e))
+        return redirect('budget')

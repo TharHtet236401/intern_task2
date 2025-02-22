@@ -8,4 +8,5 @@ urlpatterns = [
     path('export-transactions/', views.export_transactions, name='export_transactions'),
     path('analysis/', views.analysis, name='analysis'),
     path('budget/', views.budget, name='budget'),
+    path('add-budget/', views.add_budget, name='add_budget'),
 ]
