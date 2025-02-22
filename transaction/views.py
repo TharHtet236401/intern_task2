@@ -26,12 +26,22 @@ def transaction_table(request):
         page_obj = paginator.get_page(page_number)
         
         context = {
-            'page_obj': page_obj
+            'page_obj': page_obj,
+            'categories': Transaction.CATEGORY_CHOICES
         }
-        return render(request, 'transaction/partials/transaction_table.html', context)
+
+        # Check if it's an HTMX request
+        if request.headers.get('HX-Request'):
+            return render(request, 'transaction/partials/transaction_table.html', context)
+        else:
+            # For direct URL access, render the full page
+            return render(request, 'transaction/home.html', context)
+
     except Exception as e:
-        # Handle error appropriately
-        return render(request, 'transaction/partials/transaction_table.html', {'error': str(e)})
+        if request.headers.get('HX-Request'):
+            return render(request, 'transaction/partials/transaction_table.html', {'error': str(e)})
+        else:
+            return render(request, 'transaction/home.html', {'error': str(e)})
 
 def add_transaction(request):
     try:
