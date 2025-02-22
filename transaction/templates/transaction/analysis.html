@@ -103,11 +103,10 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
     
     new Chart(ctx, {
-        type: 'bar',
+        type: 'pie',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Expenses ($)',
                 data: data,
                 backgroundColor: colors,
                 borderColor: colors.map(color => color.replace('0.7', '1')),
@@ -120,22 +119,16 @@ document.addEventListener('DOMContentLoaded', function() {
             aspectRatio: 2,
             plugins: {
                 legend: {
-                    display: false
+                    display: true,
+                    position: 'right'
                 },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return '$ ' + context.raw.toFixed(2);
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return '$ ' + value;
+                            const value = context.raw;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `$ ${value.toFixed(2)} (${percentage}%)`;
                         }
                     }
                 }
