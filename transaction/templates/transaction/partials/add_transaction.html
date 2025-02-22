@@ -1,0 +1,84 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Add New Transaction</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form hx-post="{% url 'add_transaction' %}" 
+              hx-target="#transaction-table"
+              hx-swap="outerHTML">
+            <div class="modal-body">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Transaction Type</label>
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="transaction_type" value="expense" id="expense" checked>
+                        <label class="btn btn-outline-danger" for="expense">Expense</label>
+                        
+                        <input type="radio" class="btn-check" name="transaction_type" value="income" id="income">
+                        <label class="btn btn-outline-success" for="income">Income</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Amount ($)</label>
+                    <input type="number" 
+                           name="amount" 
+                           class="form-control" 
+                           step="0.01" 
+                           min="0.01" 
+                           required>
+                    {% if form.amount.errors %}
+                    <div class="invalid-feedback">{{ form.amount.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Date</label>
+                    <input type="date" 
+                           name="date" 
+                           class="form-control"
+                           max="{{ today|date:'Y-m-d' }}"
+                           required>
+                    {% if form.date.errors %}
+                    <div class="invalid-feedback">{{ form.date.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-select" required>
+                        <option value="">Select a category</option>
+                        {% for value, label in categories %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" 
+                             class="form-control" 
+                             rows="3"
+                             placeholder="Optional description"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" 
+                        class="btn btn-secondary" 
+                        data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" 
+                        class="btn btn-primary">
+                    Add Transaction
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = new bootstrap.Modal(document.getElementById('dialog'));
+    modal.show();
+});
+</script> 

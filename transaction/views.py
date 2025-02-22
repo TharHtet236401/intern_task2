@@ -1,9 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Transaction
 from django.core.paginator import Paginator
 from django.http import HttpResponse
+from .forms import TransactionForm
+from django.utils import timezone
 import csv
 from datetime import datetime
+from django.contrib import messages
 # Create your views here.
 def home(request):
     try:
@@ -48,10 +51,28 @@ def transaction_table(request):
 
 def add_transaction(request):
     try:
-        return render(request, 'transaction/partials/add_transaction.html')
+        if request.method == 'POST':
+            form = TransactionForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Transaction added successfully!')
+                return redirect('home')
+        else:
+            form = TransactionForm()
+        
+        context = {
+            'form': form,
+            'categories': Transaction.CATEGORY_CHOICES,
+            'today': timezone.now().date(),
+        }
+        return render(request, 'transaction/add_transaction.html', context)
     except Exception as e:
-        # Handle error appropriately
-        return render(request, 'transaction/partials/add_transaction.html', {'error': str(e)})
+        messages.error(request, str(e))
+        return render(request, 'transaction/add_transaction.html', {
+            'error': str(e), 
+            'categories': Transaction.CATEGORY_CHOICES,
+            'today': timezone.now().date()
+        })
 
 def export_transactions(request):
     try:
