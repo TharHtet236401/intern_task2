@@ -1,7 +1,15 @@
 {% extends 'main.html' %}
 
 {% block content %}
+
 <div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{% url 'analysis' %}" class="btn btn-primary me-2">
+                <i class="fas fa-chart-line"></i> Analysis
+            </a>
+        </div>
+    </div>
     <div class="row mb-4">
         <div class="col-md-8">
             <h2 class="mb-3">Transaction History</h2>

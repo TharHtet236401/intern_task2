@@ -108,3 +108,24 @@ def export_transactions(request):
         # In case of error, redirect back with error message
         return HttpResponse(f"Error exporting transactions: {str(e)}", status=500)
 
+def analysis(request):
+    try:
+        # Get all transactions
+        transactions = Transaction.objects.all()
+        
+        # Calculate total income and expenses
+        total_income = sum(t.amount for t in transactions if t.transaction_type == 'income')
+        total_expenses = sum(t.amount for t in transactions if t.transaction_type == 'expense')
+        
+        # Calculate net balance
+        net_balance = total_income - total_expenses
+        
+        context = { 
+            'total_income': total_income,
+            'total_expenses': total_expenses,
+            'net_balance': net_balance
+        }
+        
+        return render(request, 'transaction/analysis.html', context)
+    except Exception as e:
+        return render(request, 'transaction/analysis.html', {'error': str(e)})

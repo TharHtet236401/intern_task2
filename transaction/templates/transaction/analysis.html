@@ -1,0 +1,30 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <h1>Analysis</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">  
+                <div class="card-body">
+                    <h5 class="card-title">Total Income</h5>
+                    <p class="card-text">${{ total_income }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Expenses</h5>
+                    <p class="card-text">${{ total_expenses }}</p>  
+                </div>
+            </div>  
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Net Balance</h5>
+                    <p class="card-text">${{ net_balance }}</p>
+                </div>
+
+
+{% endblock %}
