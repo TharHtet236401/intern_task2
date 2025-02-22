@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.db.models import Sum
 from decimal import Decimal
 import json
+from django.db.models.functions import TruncMonth
 
 # Create your views here.
 def home(request):
@@ -137,7 +138,27 @@ def analysis(request):
             .order_by('-total')
         )
         
-        # Prepare chart data
+        # Get monthly trends
+        monthly_data = (
+            Transaction.objects.annotate(month=TruncMonth('date'))
+            .values('month', 'transaction_type')
+            .annotate(total=Sum('amount'))
+            .order_by('month')
+        )
+
+        # Process monthly data for chart
+        months = sorted(set(item['month'].strftime('%Y-%m') for item in monthly_data))
+        monthly_income = {item['month'].strftime('%Y-%m'): float(item['total']) 
+                        for item in monthly_data if item['transaction_type'] == 'income'}
+        monthly_expenses = {item['month'].strftime('%Y-%m'): float(item['total']) 
+                          for item in monthly_data if item['transaction_type'] == 'expense'}
+
+        # Prepare data for charts
+        trend_labels = json.dumps(months)
+        trend_income = json.dumps([monthly_income.get(month, 0) for month in months])
+        trend_expenses = json.dumps([monthly_expenses.get(month, 0) for month in months])
+        
+        # Prepare pie chart data
         expense_labels = json.dumps([Transaction.CATEGORY_CHOICES_DICT.get(item['category'], item['category']) 
                                    for item in expense_by_category])
         expense_data = json.dumps([float(item['total']) for item in expense_by_category])
@@ -154,6 +175,9 @@ def analysis(request):
             'expense_data': expense_data,
             'income_labels': income_labels,
             'income_data': income_data,
+            'trend_labels': trend_labels,
+            'trend_income': trend_income,
+            'trend_expenses': trend_expenses,
         }
         
         return render(request, 'transaction/analysis.html', context)
