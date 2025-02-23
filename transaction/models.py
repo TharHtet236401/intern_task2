@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class Transaction(models.Model):
@@ -22,13 +23,7 @@ class Transaction(models.Model):
     ]
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    def clean(self):
-        if self.amount < 0:
-            raise ValidationError("Amount must be positive")
     date = models.DateField(default=timezone.now)
-    def clean(self):
-        if self.date > timezone.now():
-            raise ValidationError("Date cannot be in the future")
     created_at = models.DateTimeField(default=timezone.now)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     description = models.TextField(max_length=200, blank=True)
@@ -43,7 +38,17 @@ class Transaction(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    def clean(self):
+        # Validate amount
+        if self.amount <= 0:
+            raise ValidationError("Amount must be positive")
+        
+        # Validate date - compare with timezone.now().date()
+        if self.date > timezone.now().date():
+            raise ValidationError("Date cannot be in the future")
+
     def save(self, *args, **kwargs):
+        self.full_clean()  # Run validation before saving
         if not self.id:
             self.created_at = timezone.now()
         super().save(*args, **kwargs)
@@ -62,8 +67,8 @@ class Budget(models.Model):
     ]
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(auto_now_add=True)    
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)    
+    updated_at = models.DateTimeField(default=timezone.now)
     month = models.IntegerField(default=timezone.now().month)
     year = models.IntegerField(default=timezone.now().year)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
