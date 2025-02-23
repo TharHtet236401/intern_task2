@@ -18,7 +18,7 @@ class Command(BaseCommand):
             target_months = [
                 (12, 2024),  # December 2024
                 (1, 2025),   # January 2025
-                (2, 2025),   # February 2025
+                (2, 2025),   # February 2025 (up to 22nd)
             ]
 
             # Set monthly budgets for expense categories
@@ -131,7 +131,10 @@ class Command(BaseCommand):
             for month, year in target_months:
                 # Add monthly salary
                 salary_amount = round(random.uniform(3000, 5000), 2)
-                salary_date = datetime(year, month, random.randint(1, 28)).date()
+                salary_date = datetime(year, month, 
+                    # Limit February to 22nd day
+                    random.randint(1, 22 if month == 2 and year == 2025 else 28)
+                ).date()
                 
                 transactions.append(
                     Transaction(
@@ -146,26 +149,24 @@ class Command(BaseCommand):
 
                 # Generate expenses for each category
                 for category in expense_categories:
-                    # Lower chance of exceeding budget
                     will_exceed = random.random() < 0.25  # 25% chance to exceed
                     
-                    # Vary number of transactions by category
                     if category == 'bills':
-                        num_transactions = random.randint(1, 3)  # Fewer bill payments
+                        num_transactions = random.randint(1, 3)
                     else:
-                        num_transactions = random.randint(3, 5)  # Other regular expenses
+                        num_transactions = random.randint(3, 5)
                     
                     for _ in range(num_transactions):
-                        # Determine if this specific transaction will be high
-                        is_high = will_exceed and random.random() < 0.5  # Only some transactions will be high
-                        
+                        is_high = will_exceed and random.random() < 0.5
                         amount_range = (
                             expense_categories[category]['high_range'] if is_high 
                             else expense_categories[category]['base_range']
                         )
                         
                         amount = round(random.uniform(*amount_range), 2)
-                        day = random.randint(1, 28)
+                        # Limit February to 22nd day
+                        max_day = 22 if month == 2 and year == 2025 else 28
+                        day = random.randint(1, max_day)
                         date = datetime(year, month, day).date()
                         
                         transactions.append(
@@ -185,7 +186,9 @@ class Command(BaseCommand):
                     if random.random() < 0.7:  # 70% chance of additional income
                         amount = round(random.uniform(
                             *income_categories[category]['range']), 2)
-                        day = random.randint(1, 28)
+                        # Limit February to 22nd day
+                        max_day = 22 if month == 2 and year == 2025 else 28
+                        day = random.randint(1, max_day)
                         date = datetime(year, month, day).date()
                         
                         transactions.append(
