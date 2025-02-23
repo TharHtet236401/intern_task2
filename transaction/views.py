@@ -225,6 +225,7 @@ def analysis(request):
 
 def budget(request):
     try:
+        # get the month and year from the filter url
         selected_month = int(request.GET.get('month', timezone.now().month))
         selected_year = int(request.GET.get('year', timezone.now().year))
         
@@ -238,7 +239,7 @@ def budget(request):
             year=selected_year
         )
         
-        # Calculate spent amounts for each category in the selected month
+        # do the calculation amounts for each category in the selected month of the filter
         spent_amounts = (
             Transaction.objects.filter(
                 transaction_type='expense',
@@ -250,14 +251,17 @@ def budget(request):
         )
         
         # Convert to dictionary for easy lookup
+        # just taking the advice from AI for better lookup
         spent_dict = {item['category']: float(item['total']) for item in spent_amounts}
         
         # Add spent amounts and calculate progress for each budget
         for budget in budgets:
             spent = spent_dict.get(budget.category, 0)
             budget.spent_amount = spent
+            # calculate the remaining amount by subtracting the spent amount from the budget amount
             budget.remaining = float(budget.amount) - spent
             if float(budget.amount) > 0:
+                # calculate the progress by dividing the spent amount by the budget amount and multiplying by 100 with the help of AI code suggestons
                 budget.progress = min((spent / float(budget.amount)) * 100, 100)
             else:
                 budget.progress = 0
@@ -274,7 +278,7 @@ def budget(request):
                 for i in range(1, 13)
             ]
         }
-
+        # this is to send the data for the htmx request for showing dynamic content based on filter
         if request.headers.get('HX-Request'):
             return render(request, 'transaction/partials/budget_table.html', context)
         
