@@ -119,6 +119,7 @@ def export_transactions(request):
         # In case of error, redirect back with error message
         return HttpResponse(f"Error exporting transactions: {str(e)}", status=500)
 
+# This is the most chllengin and timeconsuming part of this task 2.. i got prety well understanding to  send the data for the pie chart.. but became greedy and tried to use AI composer to generate the trendchart, comparison chart and so on .It became out of my hands I tried hard to understand the logic.Need to take the explanation from AI to understand the logic.and which data we have to send to the frontedn to get the correct output.
 def analysis(request):
     try:
         # Get current month and year for budget comparison
