@@ -74,3 +74,6 @@ The application will be available at `http://127.0.0.1:8000/`
 
 #Chart
 --I also had no experience with Chart.js, but I studied its basic functions to understand what kind of data needed to be sent from the backend. Then, I used code suggestions from Cursor to develop the backend functions for the chart.
+
+#Mock Data Generator
+--as I had no experience with generating mock data, I used Cursor Composer to generte the mock using random package.
