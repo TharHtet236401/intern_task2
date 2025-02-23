@@ -24,6 +24,7 @@
                         </div>
                         <h6 class="card-subtitle text-muted mb-0">Net Balance</h6>
                     </div>
+                    <!-- net balance is the subtraction of the income and expense -->
                     <h3 class="card-title {% if net_balance >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
                         {% if net_balance >= 0 %}+{% endif %}${{ net_balance|floatformat:2 }}
                     </h3>
@@ -123,7 +124,7 @@
 
 <!-- Add Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<!-- I used pure AI Composer to generate the chart.js code for the charts.but i could create the basic pie chart by myself. but for the trend chart and comparison chart i used AI composer to generate the code and follow along the AI suggestions. chat js was functions that we have to input the data from the backend and display the chart. -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Colors for charts

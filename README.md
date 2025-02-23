@@ -71,13 +71,13 @@ The application will be available at `http://127.0.0.1:8000/`
 ## 🤖 AI Usage Report
 
 ### #HTMX
---For the frontend, since I had no experience with HTMX, I first used a simple template with basic CRUD functionality. After completing it, I tried converting it to HTMX using Cursor Composer and solved issues. Later, I noticed some changes in my backend code due to HTMX integration, so I worked on understanding and adjusting my backend accordingly.
+--I became experienced in HTMX after completing the task 1. so , i create the backend for the sections of the dyanmic pages.And then implment by using AI Composer to send the htxm request from the frontend.
 
 ### #Chart
---I also had no experience with Chart.js, but I studied its basic functions to understand what kind of data needed to be sent from the backend. Then, I used code suggestions from Cursor to develop the backend functions for the chart.
+--I also had no experience with Chart.js, but I studied its basic functions to understand what kind of data needed to be sent from the backend. Then, I used code suggestions from Cursor to develop the backend functions for the chart.For backend complex logic for trend chart, I used AI composer to generate the code and tried so hard to understand the logic.
 
-### #Mock Data Generator
---as I had no experience with generating mock data, I used Cursor Composer to generte the mock using random package.
+### #Ramdom 
+--as I had no experience with generating mock data, I used Cursor Composer to generte the mock using random package to display the data in the frontend with certain criteria.I used random instead of faker library as it makes the data more realistic to the range i want to input and easy to understand and follwed along the AI suggestions.
 
 ## 📸 Screenshots
 
