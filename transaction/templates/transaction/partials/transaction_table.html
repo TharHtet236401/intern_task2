@@ -49,7 +49,7 @@
             {% endfor %}
         </tbody>
     </table>
-
+    <!-- pagination with AI composer-->
     {% if page_obj.paginator.num_pages > 1 %}
     <div class="d-flex justify-content-between align-items-center mt-4">
         <div class="text-muted small">
@@ -57,6 +57,7 @@
         </div>
         <nav aria-label="Transaction pagination">
             <ul class="pagination mb-0">
+                <!-- to show the previous page and develp the htmx request to send the data to the backend -->
                 {% if page_obj.has_previous %}
                 <li class="page-item">
                     <a class="page-link" 
@@ -66,6 +67,7 @@
                         &laquo;&laquo;
                     </a>
                 </li>
+                <!-- to show the next page and develp the htmx request to send the data to the backend -->
                 <li class="page-item">
                     <a class="page-link" 
                        hx-get="{% url 'transaction_table' %}?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}"
