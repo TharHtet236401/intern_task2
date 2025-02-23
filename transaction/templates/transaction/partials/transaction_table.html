@@ -32,6 +32,7 @@
                     <span class="badge bg-danger">Expense</span>
                     {% endif %}
                 </td>
+                <!-- to show the amount with the sign and color -->
                 <td class="text-end fw-bold {% if transaction.transaction_type == 'income' %}text-success{% else %}text-danger{% endif %}">
                     {% if transaction.transaction_type == 'income' %}+{% else %}-{% endif %}
                     ${{ transaction.amount }}
