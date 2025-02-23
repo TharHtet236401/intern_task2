@@ -7,6 +7,7 @@
         <div class="col-md-6">
             <h2 class="mb-3">Transaction History</h2>
         </div>
+        <!-- just developing the url linnk for buttons -->
         <div class="col-md-6 text-end">
             <div class="button-group">
                 <a href="{% url 'add_transaction' %}" class="btn btn-primary">
@@ -36,6 +37,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <!-- Transaction filter -->
+                     <!-- showing the transaction filter with the data sent from the backend and send query by htmx -->
                     <div class="mb-4">
                         <select class="form-select" 
                                 style="width: 200px;"
@@ -68,6 +70,7 @@
 </div>
 
 <script>
+    // this is updating the export url based on the category and to be used in the export button
     function updateExportUrl(category) {
         const exportBtn = document.getElementById('export-btn');
         const baseUrl = "{% url 'export_transactions' %}";

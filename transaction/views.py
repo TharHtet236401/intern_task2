@@ -12,7 +12,7 @@ from decimal import Decimal
 import json
 from django.db.models.functions import TruncMonth
 
-# Create your views here.
+# this time home page will render the whole page not like previoud task 1 
 def home(request):
     try:
         categories = Transaction.CATEGORY_CHOICES
@@ -25,6 +25,7 @@ def home(request):
         return render(request, 'transaction/home.html', {'error': str(e)})
 
 def transaction_table(request):
+    # prepare the backend to send the data for sectionionl areas of the page.
     try:
         category = request.GET.get('category', '')
         transactions = Transaction.objects.all().order_by('-date', '-created_at')
@@ -43,6 +44,7 @@ def transaction_table(request):
 
         # Check if it's an HTMX request
         if request.headers.get('HX-Request'):
+            # send the context for htmx requeest
             return render(request, 'transaction/partials/transaction_table.html', context)
         else:
             # For direct URL access, render the full page
@@ -55,6 +57,7 @@ def transaction_table(request):
             return render(request, 'transaction/home.html', {'error': str(e)})
 
 def add_transaction(request):
+    # this is rendering the simple add transaction page not using htmx
     try:
         if request.method == 'POST':
             form = TransactionForm(request.POST)
@@ -64,10 +67,11 @@ def add_transaction(request):
                 return redirect('home')
         else:
             form = TransactionForm()
-        
+        # prepare the context to send the data for the page
         context = {
             'form': form,
             'categories': Transaction.CATEGORY_CHOICES,
+            # this is to show the current date
             'today': timezone.now().date(),
         }
         return render(request, 'transaction/add_transaction.html', context)
@@ -81,13 +85,15 @@ def add_transaction(request):
 
 def export_transactions(request):
     try:
+        # this is to get the category from the url
+        # i jsut used AI composer for this part as i have no idea how to exprot the data in csv format and learnt form it .It make the button to down http responese with csv header and content type
         category = request.GET.get('category', '')
         transactions = Transaction.objects.all().order_by('-date', '-created_at')
         
         if category:
             transactions = transactions.filter(category=category)
 
-        # Create the HttpResponse object with CSV header
+        # Create the HttpResponse object with CSV header to be downloaded
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename="transactions_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv"'
 
@@ -97,7 +103,7 @@ def export_transactions(request):
         # Write header
         writer.writerow(['Date', 'Category', 'Description', 'Type', 'Amount'])
 
-        # Write data
+        # Write data from queryset to the csv file
         for transaction in transactions:
             writer.writerow([
                 transaction.date.strftime("%Y-%m-%d"),
@@ -106,7 +112,7 @@ def export_transactions(request):
                 transaction.get_transaction_type_display(),
                 f"{'+ ' if transaction.transaction_type == 'income' else '- '}${abs(transaction.amount)}"
             ])
-
+        # send the response to the user to be downloaded
         return response
         
     except Exception as e:
@@ -279,6 +285,7 @@ def budget(request):
 
 def add_budget(request):
     try:
+        # this is to add the budget to the database wiht simple form
         if request.method == 'POST':
             category = request.POST.get('category')
             amount = request.POST.get('amount')
@@ -291,7 +298,7 @@ def add_budget(request):
                 month=month,
                 year=year
             ).first()
-            
+            # if exitsed update the budget
             if existing_budget:
                 existing_budget.amount = amount
                 existing_budget.save()
@@ -306,7 +313,7 @@ def add_budget(request):
                 messages.success(request, 'Budget created successfully!')
             
             return redirect('budget')
-        
+        # prepare the context to send the data for the page
         context = {
             'categories': Budget.CATEGORY_CHOICES,
             'current_month': timezone.now().month,
