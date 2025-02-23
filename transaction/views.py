@@ -155,12 +155,13 @@ def analysis(request):
         
         transactions = Transaction.objects.all()
         
-        # Calculate totals
+        # Calculate net balance by subtracting the total expenses from the total income
         total_income = sum(t.amount for t in transactions if t.transaction_type == 'income')
         total_expenses = sum(t.amount for t in transactions if t.transaction_type == 'expense')
         net_balance = total_income - total_expenses
         
         # Get expense data by category
+        # this is to get the data for the pie chart
         expense_by_category = (
             Transaction.objects.filter(transaction_type='expense')
             .values('category')
@@ -169,6 +170,7 @@ def analysis(request):
         )
         
         # Get income data by category
+        # this is to get the data for the pie chart
         income_by_category = (
             Transaction.objects.filter(transaction_type='income')
             .values('category')
