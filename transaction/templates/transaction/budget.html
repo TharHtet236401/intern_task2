@@ -6,6 +6,7 @@
         <div class="col-12 d-flex align-items-center justify-content-between">
             <h2 class="mb-0">Budget Overview</h2>
             <div>
+                <!-- developing links for buttons -->
                 <a href="{% url 'add_budget' %}" class="btn btn-primary me-2">
                     <i class="fas fa-plus me-2"></i>
                     <span>Add Budget</span>
@@ -19,6 +20,7 @@
     </div>
 
     <!-- Month/Year Filter -->
+     <!-- just like the prieious projects develping filter , construct query to send the as htmx request for dynamic content rendering -->
     <div class="row mb-3">
         <div class="col-12">
             <div class="card shadow-sm">
@@ -31,6 +33,7 @@
                                     hx-target="#budget-table"
                                     hx-trigger="change"
                                     hx-indicator="#loading">
+                                    <!-- looping through the months from the backend -->
                                 {% for month in months %}
                                     <option value="{{ month.number }}" 
                                             {% if month.number == selected_month %}selected{% endif %}>
