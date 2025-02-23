@@ -79,6 +79,5 @@ The application will be available at `http://127.0.0.1:8000/`
 ### #Ramdom 
 --as I had no experience with generating mock data, I used Cursor Composer to generte the mock using random package to display the data in the frontend with certain criteria.I used random instead of faker library as it makes the data more realistic to the range i want to input and easy to understand and follwed along the AI suggestions.
 
-## 📸 Screenshots
-
-[Consider adding screenshots of your key features here]
+### #Request 
+--Although I try to modulate the css and js with separate files, but I had some issues with the htmx request also due to time constraint for me to do it.I will make sure to understand the usage of static files and modulate the css and js with separate files before interview.
