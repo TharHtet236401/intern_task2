@@ -1,8 +1,8 @@
-# Financial Transaction Tracker
+# 📊 Financial Transaction Tracker
 
 A Django-based financial transaction tracking system that helps users manage their income, expenses, and budgets.
 
-## Features
+## ✨ Features
 
 - Track income and expenses with categorization
 - View transaction history with filtering options
@@ -11,15 +11,20 @@ A Django-based financial transaction tracking system that helps users manage the
 - Financial analysis and reporting
 - Interactive charts for expense/income visualization
 
-## Prerequisites
+## 🔧 Prerequisites
 
 - Python 3.x
 - pip (Python package installer)
 
-## Setup Instructions
+## 🚀 Setup Instructions
 
-1. Create and activate a virtual environment:
+### 1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/your-repo-name.git
+cd financial-tracker
+```
 
+### 2. Create and activate a virtual environment:
 ```bash
 # Create virtual environment
 python -m venv venv
@@ -31,33 +36,29 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-2. Install dependencies:
-
+### 3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Run database migrations:
-
+### 4. Run database migrations:
 ```bash
 python manage.py migrate
 ```
 
-4. (Optional) Seed the database with sample transactions:
-
+### 5. (Optional) Seed the database with sample transactions:
 ```bash
 python manage.py seed_transactions
 ```
 
-5. Start the development server:
-
+### 6. Start the development server:
 ```bash
 python manage.py runserver
 ```
 
 The application will be available at `http://127.0.0.1:8000/`
 
-## Project Structure
+## 📁 Project Structure
 
 - `transaction/` - Main application directory
   - `models.py` - Database models for Transaction and Budget
@@ -67,13 +68,17 @@ The application will be available at `http://127.0.0.1:8000/`
   - `templates/` - HTML templates
   - `migrations/` - Database migrations
 
-## AI Usage Report
+## 🤖 AI Usage Report
 
-#HTMX
+### #HTMX
 --For the frontend, since I had no experience with HTMX, I first used a simple template with basic CRUD functionality. After completing it, I tried converting it to HTMX using Cursor Composer and solved issues. Later, I noticed some changes in my backend code due to HTMX integration, so I worked on understanding and adjusting my backend accordingly.
 
-#Chart
+### #Chart
 --I also had no experience with Chart.js, but I studied its basic functions to understand what kind of data needed to be sent from the backend. Then, I used code suggestions from Cursor to develop the backend functions for the chart.
 
-#Mock Data Generator
+### #Mock Data Generator
 --as I had no experience with generating mock data, I used Cursor Composer to generte the mock using random package.
+
+## 📸 Screenshots
+
+[Consider adding screenshots of your key features here]

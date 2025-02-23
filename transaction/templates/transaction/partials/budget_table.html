@@ -26,7 +26,7 @@
                             {% elif budget.progress >= 80 %}bg-warning
                             {% else %}bg-primary{% endif %}"
                             role="progressbar" 
-                            style="width: {{ budget.progress|floatformat:0 }}%" 
+                            style="width: {{ budget.progress|floatformat:0 }}%;"
                             aria-valuenow="{{ budget.progress|floatformat:0 }}"
                             aria-valuemin="0"
                             aria-valuemax="100">
