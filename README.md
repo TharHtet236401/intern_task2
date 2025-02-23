@@ -20,8 +20,8 @@ A Django-based financial transaction tracking system that helps users manage the
 
 ### 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/your-repo-name.git
-cd financial-tracker
+git clone https://github.com/TharHtet236401/intern_task2.git
+cd intern_task2
 ```
 
 ### 2. Create and activate a virtual environment:
