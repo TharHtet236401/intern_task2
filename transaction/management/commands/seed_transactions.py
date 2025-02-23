@@ -1,175 +1,219 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from transaction.models import Transaction
+from transaction.models import Transaction, Budget
 import random
 from decimal import Decimal
 from datetime import datetime, timedelta
 
 class Command(BaseCommand):
-    help = 'Seed the database with mock transactions'
+    help = 'Seed the database with mock transactions and budgets'
 
     def handle(self, *args, **options):
         try:
-            # Delete existing transactions
+            # Delete existing data
             Transaction.objects.all().delete()
+            Budget.objects.all().delete()
             
-            # Categories and their typical amount ranges and descriptions
+            # Define target months
+            target_months = [
+                (12, 2024),  # December 2024
+                (1, 2025),   # January 2025
+                (2, 2025),   # February 2025
+            ]
+
+            # Set monthly budgets for expense categories
+            base_budgets = {
+                'food': 800,
+                'transportation': 300,
+                'entertainment': 400,
+                'bills': 1200,
+                'other': 500
+            }
+
+            # Create budgets for each month with some variation
+            for month, year in target_months:
+                for category, base_amount in base_budgets.items():
+                    # Vary budget by ±10%
+                    variation = random.uniform(0.9, 1.1)
+                    amount = round(base_amount * variation, 2)
+                    Budget.objects.create(
+                        category=category,
+                        amount=amount,
+                        month=month,
+                        year=year
+                    )
+
+            # Define transaction categories with varying ranges
             expense_categories = {
                 'food': {
-                    'range': (10, 200),
+                    'base_range': (100, 700),  # Most transactions within budget
+                    'high_range': (700, 1000),  # Only some will exceed
                     'descriptions': [
-                        'Grocery shopping at Walmart',
-                        'Lunch at restaurant',
-                        'Coffee and breakfast',
-                        'Weekly groceries',
+                        'Grocery shopping',
+                        'Restaurant dinner',
                         'Food delivery',
-                        'Dinner with friends'
+                        'Cafe and snacks',
+                        'Weekly groceries'
                     ]
                 },
                 'transportation': {
-                    'range': (5, 100),
+                    'base_range': (30, 250),
+                    'high_range': (250, 400),
                     'descriptions': [
-                        'Bus ticket',
                         'Uber ride',
                         'Gas refill',
-                        'Train ticket',
                         'Car maintenance',
+                        'Public transport pass',
                         'Taxi fare'
                     ]
                 },
                 'entertainment': {
-                    'range': (20, 300),
+                    'base_range': (50, 300),
+                    'high_range': (300, 500),
                     'descriptions': [
                         'Movie tickets',
                         'Concert tickets',
-                        'Netflix subscription',
                         'Gaming subscription',
-                        'Weekend activities',
-                        'Bowling night'
+                        'Streaming services',
+                        'Weekend activities'
                     ]
                 },
                 'bills': {
-                    'range': (50, 1000),
+                    'base_range': (200, 1000),  # Most bills within budget
+                    'high_range': (1000, 1400),  # Occasional high bills
                     'descriptions': [
                         'Electricity bill',
                         'Water bill',
                         'Internet bill',
                         'Phone bill',
-                        'Insurance payment',
                         'Rent payment'
                     ]
                 },
                 'other': {
-                    'range': (10, 500),
+                    'base_range': (50, 400),
+                    'high_range': (400, 600),
                     'descriptions': [
                         'Home supplies',
-                        'Personal care items',
-                        'Office supplies',
-                        'Gift purchase',
                         'Clothing purchase',
+                        'Healthcare expenses',
+                        'Gift purchase',
                         'Miscellaneous items'
                     ]
                 }
             }
-            
-            # Income sources and their typical ranges
+
             income_categories = {
                 'salary': {
-                    'range': (2000, 5000),
-                    'descriptions': [
-                        'Monthly salary',
-                        'Regular paycheck',
-                        'Salary deposit',
-                        'Wage payment',
-                        'Pay period deposit'
-                    ]
+                    'range': (3000, 5000),
+                    'descriptions': ['Monthly salary']
                 },
                 'freelance': {
-                    'range': (100, 1000),
+                    'range': (500, 2000),
                     'descriptions': [
-                        'Freelance project payment',
-                        'Consulting fee',
-                        'Contract work',
-                        'Project completion payment',
-                        'Freelance gig'
+                        'Freelance project',
+                        'Consulting work',
+                        'Contract payment'
                     ]
                 },
                 'investment': {
-                    'range': (50, 500),
+                    'range': (100, 1000),
                     'descriptions': [
                         'Stock dividend',
                         'Interest income',
-                        'Investment return',
-                        'Portfolio gains',
-                        'Dividend payment'
-                    ]
-                },
-                'other': {
-                    'range': (100, 1000),
-                    'descriptions': [
-                        'Gift received',
-                        'Refund',
-                        'Bonus payment',
-                        'Side hustle income',
-                        'Miscellaneous income'
+                        'Investment return'
                     ]
                 }
             }
-            
-            # Generate random dates within the last 6 months
-            end_date = timezone.now()
-            start_date = end_date - timedelta(days=180)
-            
-            # Generate 175 transactions (adjust number as needed)
-            num_transactions = 175
+
             transactions = []
-            
-            for _ in range(num_transactions):
-                # Randomly decide if it's income or expense (30% chance of income)
-                is_income = random.random() < 0.3
+
+            # Generate transactions for each month
+            for month, year in target_months:
+                # Add monthly salary
+                salary_amount = round(random.uniform(3000, 5000), 2)
+                salary_date = datetime(year, month, random.randint(1, 28)).date()
                 
-                if is_income:
-                    category = random.choice(list(income_categories.keys()))
-                    category_data = income_categories[category]
-                    transaction_type = 'income'
-                else:
-                    category = random.choice(list(expense_categories.keys()))
-                    category_data = expense_categories[category]
-                    transaction_type = 'expense'
-                
-                # Generate random amount with 2 decimal places
-                min_amount, max_amount = category_data['range']
-                amount = round(random.uniform(min_amount, max_amount), 2)
-                
-                # Generate random date and time
-                random_days = random.randint(0, (end_date - start_date).days)
-                random_seconds = random.randint(0, 24*60*60)  # Random time within the day
-                transaction_date = start_date + timedelta(days=random_days)
-                created_at = transaction_date + timedelta(seconds=random_seconds)
-                
-                description = random.choice(category_data['descriptions'])
-                
-                transaction = Transaction(
-                    amount=Decimal(str(amount)),
-                    date=transaction_date,
-                    created_at=created_at,
-                    category=category,
-                    description=description,
-                    transaction_type=transaction_type
+                transactions.append(
+                    Transaction(
+                        amount=Decimal(str(salary_amount)),
+                        date=salary_date,
+                        created_at=timezone.now(),
+                        category='salary',
+                        description='Monthly salary',
+                        transaction_type='income'
+                    )
                 )
-                transactions.append(transaction)
-            
-            # Sort transactions by created_at before bulk create to maintain chronological order
-            transactions.sort(key=lambda x: x.created_at)
+
+                # Generate expenses for each category
+                for category in expense_categories:
+                    # Lower chance of exceeding budget
+                    will_exceed = random.random() < 0.25  # 25% chance to exceed
+                    
+                    # Vary number of transactions by category
+                    if category == 'bills':
+                        num_transactions = random.randint(1, 3)  # Fewer bill payments
+                    else:
+                        num_transactions = random.randint(3, 5)  # Other regular expenses
+                    
+                    for _ in range(num_transactions):
+                        # Determine if this specific transaction will be high
+                        is_high = will_exceed and random.random() < 0.5  # Only some transactions will be high
+                        
+                        amount_range = (
+                            expense_categories[category]['high_range'] if is_high 
+                            else expense_categories[category]['base_range']
+                        )
+                        
+                        amount = round(random.uniform(*amount_range), 2)
+                        day = random.randint(1, 28)
+                        date = datetime(year, month, day).date()
+                        
+                        transactions.append(
+                            Transaction(
+                                amount=Decimal(str(amount)),
+                                date=date,
+                                created_at=timezone.now(),
+                                category=category,
+                                description=random.choice(
+                                    expense_categories[category]['descriptions']),
+                                transaction_type='expense'
+                            )
+                        )
+
+                # Add some random income transactions
+                for category in ['freelance', 'investment']:
+                    if random.random() < 0.7:  # 70% chance of additional income
+                        amount = round(random.uniform(
+                            *income_categories[category]['range']), 2)
+                        day = random.randint(1, 28)
+                        date = datetime(year, month, day).date()
+                        
+                        transactions.append(
+                            Transaction(
+                                amount=Decimal(str(amount)),
+                                date=date,
+                                created_at=timezone.now(),
+                                category=category,
+                                description=random.choice(
+                                    income_categories[category]['descriptions']),
+                                transaction_type='income'
+                            )
+                        )
+
+            # Sort transactions by date
+            transactions.sort(key=lambda x: x.date)
             
             # Bulk create all transactions
             Transaction.objects.bulk_create(transactions)
             
             self.stdout.write(
-                self.style.SUCCESS(f'Successfully created {num_transactions} mock transactions')
+                self.style.SUCCESS(
+                    f'Successfully created {len(transactions)} transactions and '
+                    f'{Budget.objects.count()} budgets for Dec 2024 - Feb 2025'
+                )
             )
             
         except Exception as e:
             self.stdout.write(
-                self.style.ERROR(f'Error creating mock transactions: {str(e)}')
+                self.style.ERROR(f'Error creating mock data: {str(e)}')
             ) 
